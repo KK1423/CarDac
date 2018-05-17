@@ -69,7 +69,7 @@
                 button: shutdown {
 					label = "shutdown";
 					linux,code = <116>; // KEY_POWER
-					gpios = <&gpio 25 1>;
+					gpios = <&gpio 26 1>;
 				};
 			};
 		};
@@ -79,6 +79,8 @@
 		__overlay__ {
 			power_ctrl: power_ctrl {
 				compatible = "gpio-poweroff";
+				pinctrl-names="default";
+				pinctrl-0 = <&power_ctrl_pins>;
 				gpios = <&gpio 20 0>;
 				force;
 			};
