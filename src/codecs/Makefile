@@ -6,13 +6,10 @@ MODULENAME = snd-soc-tas6424.ko
 
 snd-soc-tas6424-objs := tas6424.o
 obj-m += snd-soc-tas6424.o
-snd-soc-cardac-objs := cardac.o
-obj-m += snd-soc-cardac.o
-
 
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
-    CFLAGS_wm8741.o := -DDEBUG
+    CFLAGS_tas6424.o := -DDEBUG
 endif
 
 all:
