@@ -47,7 +47,7 @@
 				brcm,pull = <2>; // 0 = none, 1 = pull down, 2 = pull up
 			};
 			//power_ctrl_pins: power_ctrl_pins {
-			//	brcm,pins = <20>;
+			//	brcm,pins = <6>;
 			//	brcm,function = <1>; // out
 			//};
 		};
@@ -81,7 +81,7 @@
 				compatible = "gpio-poweroff";
 				//pinctrl-names="default";
 				//pinctrl-0 = <&power_ctrl_pins>;
-				gpios = <&gpio 20 0>;
+				gpios = <&gpio 6 0>;
 				force;
 			};
 		};
