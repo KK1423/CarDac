@@ -69,7 +69,7 @@ static struct snd_soc_dai_link cardac_dai[] = {
 };
 
 /* audio machine driver */
-static struct snd_soc_card snd_rpi_hifiberry_digi = {
+static struct snd_soc_card cardac_card = {
 	.name         = "snd_cardac",
 	.driver_name  = "CarDAC",
 	.owner        = THIS_MODULE,
@@ -82,13 +82,15 @@ static struct snd_soc_card snd_rpi_hifiberry_digi = {
 static int cardac_probe(struct platform_device *pdev){
     int ret;
     struct device_node *np;
-    
+
     cardac_card.dev = &pdev->dev;
     
     np = pdev->dev.of_node;
+    
+
     if (np == NULL) {
         dev_err(&pdev->dev, "Device tree node not found\n");
-        return = ENODEV;
+        return ENODEV;
     }
     struct device_node *i2s_node;
     struct snd_soc_dai_link *dai = &cardac_dai[0];
@@ -96,7 +98,7 @@ static int cardac_probe(struct platform_device *pdev){
 					"i2s-controller", 0);
     struct device_node *codec_node;
     codec_node = of_parse_phandle(pdev->dev.of_node,
-                    "cardac,codec");
+                    "cardac,codec", 0);
 
     if (i2s_node) {
 	   dai->cpu_dai_name = NULL;
