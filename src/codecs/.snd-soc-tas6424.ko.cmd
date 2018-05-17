@@ -1,0 +1,1 @@
+cmd_/home/karthik/cardac/src/codecs/snd-soc-tas6424.ko := arm-linux-gnueabihf-ld -EL -r  -T ./scripts/module-common.lds --build-id  -o /home/karthik/cardac/src/codecs/snd-soc-tas6424.ko /home/karthik/cardac/src/codecs/snd-soc-tas6424.o /home/karthik/cardac/src/codecs/snd-soc-tas6424.mod.o ;  true
