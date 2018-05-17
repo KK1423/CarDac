@@ -82,7 +82,9 @@ static struct snd_soc_card cardac_card = {
 static int cardac_probe(struct platform_device *pdev){
     int ret;
     struct device_node *np;
-
+    struct device_node *i2s_node;
+    struct device_node *codec_node;
+    struct snd_soc_dai_link *dai = &cardac_dai[0];
     cardac_card.dev = &pdev->dev;
     
     np = pdev->dev.of_node;
@@ -92,11 +94,10 @@ static int cardac_probe(struct platform_device *pdev){
         dev_err(&pdev->dev, "Device tree node not found\n");
         return ENODEV;
     }
-    struct device_node *i2s_node;
-    struct snd_soc_dai_link *dai = &cardac_dai[0];
+
     i2s_node = of_parse_phandle(pdev->dev.of_node,
 					"i2s-controller", 0);
-    struct device_node *codec_node;
+
     codec_node = of_parse_phandle(pdev->dev.of_node,
                     "cardac,codec", 0);
 
@@ -122,7 +123,7 @@ static int cardac_probe(struct platform_device *pdev){
 }
 
 static int cardac_remove(struct platform_device *pdev){
-    return snd_soc_unregister(&cardac_card);
+    return snd_soc_unregister_card(&cardac_card);
 }
 
 static const struct of_device_id cardac_of_match[] = {
