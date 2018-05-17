@@ -42,12 +42,12 @@
 		__overlay__ {
         
 			pin_state: shutdown_button_pins {
-				brcm,pins = <25>; // gpio number
+				brcm,pins = <26>; // gpio number
 				brcm,function = <0>; // 0 = input, 1 = output
 				brcm,pull = <2>; // 0 = none, 1 = pull down, 2 = pull up
 			};
 			power_ctrl_pins: power_ctrl_pins {
-				brcm,pins = <8>;
+				brcm,pins = <20>;
 				brcm,function = <1>; // out
 			};
 		};
@@ -79,7 +79,7 @@
 		__overlay__ {
 			power_ctrl: power_ctrl {
 				compatible = "gpio-poweroff";
-				gpios = <&gpio 20 1>;
+				gpios = <&gpio 20 0>;
 				force;
 			};
 		};
