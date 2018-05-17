@@ -32,7 +32,7 @@
 		__overlay__ {
 			compatible = "cardac,caramp";
 			i2s-controller = <&i2s>;
-            codec = <&tas6424codec>;
+		        codec = <&tas6424codec>;
 			status = "okay";
 		};
 	};
