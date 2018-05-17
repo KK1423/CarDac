@@ -23,13 +23,9 @@
 #include <sound/pcm_params.h>
 #include <sound/soc.h>
 #include <linux/gpio/consumer.h>
-#include <linux/clk.h>
 
 #include "../codecs/tas6424.h"
 
-static struct gpio_desc *cardac_clksel_gpio;
-static struct clk	*cardac_mclk;
-static struct clk 	*cardac_plld;
 
 static int cardac_hw_params(struct snd_pcm_substream *substream, struct snd_pcm_hw_params *params){
     struct snd_soc_pcm_runtime *rtd = substream->private_data;
@@ -41,9 +37,9 @@ static int cardac_hw_params(struct snd_pcm_substream *substream, struct snd_pcm_
     
     switch(samplerate){
         case 44100:
-            gpiod_set_value_cansleep(cardac_clksel_gpio, 1);
+            break;
         case 48000:
-            gpiod_set_value_cansleep(cardac_clksel_gpio, 0);
+            break;
         default:
             dev_err(codec->dev, "Failed to set clock rate - unsupported sample rate");
     }
@@ -67,14 +63,13 @@ static struct snd_soc_dai_link cardac_dai[] = {
 	.codec_dai_name	= "tas6424-amplifier",
 	.platform_name	= "bcm2835-i2s.0",
 	.codec_name	= "tas6424",
-/*	.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
-				SND_SOC_DAIFMT_CBM_CFM,
-*/	.ops		= &cardac_ops,
+	.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_CBM_CFM,
+	.ops		= &cardac_ops,
 },
 };
 
 /* audio machine driver */
-static struct snd_soc_card cardac_card = {
+static struct snd_soc_card snd_rpi_hifiberry_digi = {
 	.name         = "snd_cardac",
 	.driver_name  = "CarDAC",
 	.owner        = THIS_MODULE,
@@ -87,20 +82,21 @@ static struct snd_soc_card cardac_card = {
 static int cardac_probe(struct platform_device *pdev){
     int ret;
     struct device_node *np;
-    struct device_node *i2s_node;
+    
     cardac_card.dev = &pdev->dev;
-    struct snd_soc_dai_link *dai = &cardac_dai[0];
-    struct device_node *codec_node;
     
     np = pdev->dev.of_node;
     if (np == NULL) {
         dev_err(&pdev->dev, "Device tree node not found\n");
-        return ENODEV;
+        return = ENODEV;
     }
+    struct device_node *i2s_node;
+    struct snd_soc_dai_link *dai = &cardac_dai[0];
     i2s_node = of_parse_phandle(pdev->dev.of_node,
 					"i2s-controller", 0);
+    struct device_node *codec_node;
     codec_node = of_parse_phandle(pdev->dev.of_node,
-                    "cardac,codec", 0);
+                    "cardac,codec");
 
     if (i2s_node) {
 	   dai->cpu_dai_name = NULL;
@@ -111,24 +107,6 @@ static int cardac_probe(struct platform_device *pdev){
        dai->codec_of_node = codec_node;
     }
 
-    cardac_clksel_gpio	= devm_gpiod_get(&pdev->dev, "clksel", GPIOD_OUT_LOW);
-    cardac_mclk		= devm_clk_get (&pdev->dev, "mclk");
-    cardac_plld		= devm_clk_get (&pdev->dev, "plld");
-    if(IS_ERR(cardac_mclk)){ printk(KERN_INFO "cardac_mclk found");}
-    else	   { printk(KERN_INFO "cardac_mclk not found");}
-    if(*cardac_plld>=0){ printk(KERN_INFO "cardac_plld found");}
-    else           { printk(KERN_INFO "cardac_plld not found");}
-
-    ret =  clk_set_parent(cardac_mclk, cardac_plld);
-    ret += clk_set_rate(cardac_mclk, 11289600);
-    ret += clk_prepare_enable(cardac_plld);
-    ret += clk_prepare_enable(cardac_mclk);
-    if(ret<0) dev_err(&pdev->dev, "Clock Configuration Error");
-
-    if(IS_ERR(cardac_clksel_gpio)){
-        dev_err(&pdev->dev,"gpio not found");
-        return cardac_clksel_gpio;
-    }
 	snd_soc_of_parse_card_name(&cardac_card, "cardac,model");
 	ret = snd_soc_register_card(&cardac_card);
 	if (ret != 0) {
@@ -142,7 +120,7 @@ static int cardac_probe(struct platform_device *pdev){
 }
 
 static int cardac_remove(struct platform_device *pdev){
-    return snd_soc_unregister_card(&cardac_card);
+    return snd_soc_unregister(&cardac_card);
 }
 
 static const struct of_device_id cardac_of_match[] = {
