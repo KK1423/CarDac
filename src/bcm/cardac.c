@@ -99,7 +99,7 @@ static int cardac_probe(struct platform_device *pdev){
 					"i2s-controller", 0);
 
     codec_node = of_parse_phandle(pdev->dev.of_node,
-                    "cardac,codec", 0);
+                    "codec", 0);
 
     if (i2s_node) {
 	   dai->cpu_dai_name = NULL;
